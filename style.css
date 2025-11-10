@@ -1,0 +1,199 @@
+.no-select {
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  user-select: none; /* Стандартный синтаксис */
+}
+
+.modal_paragraph{
+    white-space: pre;
+}
+
+input.modal_input.ch::placeholder {
+    color: #ff4747;
+
+}
+
+input.modal_input::placeholder {
+    color: #000000;
+
+}
+
+.name_header{
+    width: 130px;
+    height: 40px;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    margin: -255px 0 0 -145px;
+    text-align: center;
+    font-size: 30pt;
+    font-weight: 800;
+}
+
+.score_block{
+    display: grid;
+    grid-template-columns: 130px;
+    grid-template-rows: 10px 40px;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    margin: -255px 0 0 10px;
+}
+
+.score_name{
+    width: 135px;
+    height: 10px;
+    position: relative;
+    text-align: center;
+    font-size: 14pt;
+}
+
+.current_score{
+    width: 135px;
+    height: 40px;
+    position: relative;
+    text-align: center;
+    font-size: 30pt;
+    font-weight: 800;
+}
+
+.leaderboard_button{
+    width: 130px;
+    height: 40px;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    margin: -195px 0 0 -145px;
+    text-align: center;
+    font-size: 12pt;
+}
+
+.restart_button{
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    margin: 155px 0 0 10px;
+    width: 135px;
+    height: 40px;
+    text-align: center;
+    font-size: 12pt;
+}
+
+.undo_button{
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    margin: 155px 0 0 -145px;
+    width: 135px;
+    height: 40px;
+    text-align: center;
+    font-size: 12pt;
+}
+
+/* .container{
+    width: 270px;
+    height: 270px;
+    display: grid;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    margin: -155px 0 0 -155px;
+    padding: 10px 10px 10px 10px;
+    grid-template-columns: repeat(4, 60px);
+    grid-template-rows: repeat(4, 60px);
+    gap: 10px;
+    text-align: center;
+} */
+
+.playground{
+    width: 270px;
+    height: 270px;
+    background-color: rgb(119, 108, 76);
+    display: grid;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    margin: -145px 0 0 -145px;
+    padding: 10px 10px 10px 10px;
+    grid-template-columns: repeat(4, 60px);
+    grid-template-rows: repeat(4, 60px);
+    gap: 10px;
+    text-align: center;
+}
+
+.num_box{
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    background-color:  rgb(211, 191, 132);
+}
+
+.nb2{
+    background-color:  rgb(239, 255, 148);
+}
+
+.nb4{
+    background-color:  rgb(214, 255, 148);
+}
+
+.nb8{
+    background-color:  rgb(209, 255, 148);
+}
+
+.nb16{
+    background-color:  rgb(160, 255, 148);
+}
+
+.nb32{
+    background-color:  rgb(148, 255, 180);
+}
+
+.nb64{
+    background-color:  rgb(148, 255, 241);
+}
+
+.nb128{
+    background-color:  rgb(148, 225, 255);
+}
+
+.nb256{
+    background-color:  rgb(148, 176, 255);
+}
+
+.nb512{
+    background-color:  rgb(176, 148, 255);
+}
+
+.nb1024{
+    background-color:  rgb(237, 148, 255);
+}
+
+.nb2048{
+    background-color:  rgb(255, 148, 223);
+}
+
+.nb4096{
+    background-color:  rgb(255, 148, 171);
+}
+
+.nb8192{
+    background-color:  rgb(255, 148, 148);
+}
+
+.nb16384{
+    background-color:  rgb(255, 178, 148);
+}
+
+.nb32768{
+    background-color:  rgb(255, 139, 93);
+}
+
+.nb65536{
+    background-color:  rgb(253, 100, 39);
+}
+
+.nb131072{
+    background-color:  rgb(255, 72, 0);
+}
