@@ -1,6 +1,5 @@
 let score;
 let nums;
-let previous;
 let previous_score;
 let ns;
 let free;
@@ -11,9 +10,11 @@ let leaders_n = [];
 let leaders_s = [];
 let leaders_d = [];
 let moves = [];
-let previous_moves = [];
 let boxes = [];
 let traces = [];
+let traces_users = [];
+let back_traces = [];
+let news = [];
 
 const container = document.getElementById("container");
 
@@ -44,6 +45,8 @@ const undo = document.createElement("button");
 const leaderboard = document.getElementById("leaderboard");
 const leaderboard_button = document.createElement("button");
 
+const pos = 70;
+
 function initiateVariables(){
     score = 0;
     previous_score = 0;
@@ -51,10 +54,6 @@ function initiateVariables(){
             0, 0, 0, 0,
             0, 0, 0, 0,
             0, 0, 0, 0];
-    previous = [0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0];
     clearBoxes();
     ns = 0;
     free = true;
@@ -70,7 +69,7 @@ function initiateLeaderboard(){
     leaderboard_button.id = "leaderboard_button";
     leaderboard_button.textContent = "Таблица лидеров";
 
-    document.body.appendChild(leaderboard_button);
+    container.appendChild(leaderboard_button);
 
     leaderboard_button.addEventListener("click", () => {
         leaderboard.showModal();
@@ -136,7 +135,6 @@ function initiateCells(){
         box = document.createElement("div");
         box.classList.add("num_box");
         box.classList.add("no-select");
-        box.id = `num_box${index}`;
         playground.appendChild(box);
     }
 }
@@ -227,22 +225,27 @@ function updateDialog(){
 }
 
 function saveGame(settings=true){
-    let line = "";
-    let p_line = "";
+    let line = "t3-";
     if (settings){
-        for (let index = 0; index < nums.length; index++){
-            line += `${nums[index] != 0 ? Math.log2(nums[index]) : 0} `;
-            p_line += `${previous[index] != 0 ? Math.log2(previous[index]) : 0} `;
+        for (let index = 0; index < boxes.length; index++){
+            line += `${boxes[index] != null ? Math.log2(Number(boxes[index].textContent)) : 0}`;
+            if (index < boxes.length - 1){ line += " "; }
         }
-        line += `${score}`;
-        p_line += `${previous_score}`;
-        line += "-" + p_line;
+        line += `-${score}-${previous_score}-`;
+        for (let index = 0; index < back_traces.length; index++){
+            line += `${back_traces[index][0]} ${back_traces[index][1] != -1 ? back_traces[index][1] : "_"} ${back_traces[index][2]} ${back_traces[index][3]}`;
+            if (index < back_traces.length - 1){ line += " "; }
+        }
+        line += "-";
+        for (let index = 0; index < news.length; index++){
+            line += `${news[index][0]} ${news[index][1]}`;
+            if (index < news.length - 1){ line += " "; }
+        }
     } else { 
-        for (let index = 0; index < nums.length; index++){
+        for (let index = 0; index < 15; index++){
             line += "0 ";
-            p_line += " 0";
         }
-        line += "0-0" + p_line;
+        line += "0-0-0--";
     }
 
     try{
@@ -253,7 +256,7 @@ function saveGame(settings=true){
 }
 
 function saveLeaders(){
-    let line = "";
+    let line = "t3-";
     for (let index = 0; index < leaders_s.length - 1; index++){
         line += `${leaders_n[index]} ${leaders_s[index]} ${leaders_d[index]}\\`;
     }
@@ -268,11 +271,65 @@ function saveLeaders(){
     }
 }
 
+function loadGame(){
+    try{
+        let line;
+        let s_line;
+        let t_line;
+        let zeros = true;
+        let same = true;
+
+        line = localStorage.getItem("0").split("-");
+        if (line[0] != "t3") {initiate();}
+        line = line.slice(1);
+
+        score = Number(line[1]);
+        score_amount.textContent = score;
+        previous_score = Number(line[2]);
+        s_line = line[3].split(" ");
+        t_line = line[4].split(" ");
+        line = line[0].split(" ");
+        news = [];
+        back_traces = [];
+
+        for (let index = 0; index < line.length; index++){
+            nums[index] = line[index] != "0" ? Math.pow(2, Number(line[index])) : 0;
+            if (line[index] != "0"){ 
+                news.push([index, Math.pow(2, Number(line[index]))]);
+                zeros = false; }
+        }
+
+        addCells();
+        news = [];
+
+        if (s_line != "") {
+            for (let index = 0; index < s_line.length; index+=4){
+                back_traces.push([Number(s_line[index]), Number(s_line[index + 1] != "_" ? s_line[index + 1] : "-1"),
+                                  Number(s_line[index + 2]), Number(s_line[index + 3])]);
+                if (back_traces[back_traces.length - 1][1] == -1) { same = false; }
+            }
+        }
+
+        if (t_line != "") {
+            for (let index = 0; index < t_line.length; index+=2){
+                news.push([Number(t_line[index]), Number(t_line[index + 1])]);
+            }
+        } 
+
+        if (same) { undone = false; }
+        if (zeros) { initiate(); }
+    } catch {
+        return;
+    }    
+}
+
 function loadLeaders(){
     try{
         let lines = "";
         lines = localStorage.getItem("1");
         if (lines == "") {return;}
+        if (lines.slice(0, 2) != "t3") {return;}
+        lines = lines.slice(2);
         lines.split("\\").forEach(line => {
             const leads = line.split(" ");
             let name = "";
@@ -287,37 +344,11 @@ function loadLeaders(){
     }
 }
 
-function loadGame(){
-    try{
-        let line;
-        let p_line;
-        let zeros = true;
-        let same = true;
-        line = localStorage.getItem("0").split("-");
-        p_line = line[1].split(' ');
-        line = line[0].split(' ');
-
-        for (let index = 0; index < nums.length; index++){
-            nums[index] = line[index] != "0" ? Math.pow(2, Number(line[index])): 0;
-            previous[index] = p_line[index] != "0" ? Math.pow(2, Number(p_line[index])) : 0;
-            if (nums[index] != 0 || previous[index] != 0) { zeros = false; }
-            if (nums[index] != previous[index]) { zeros = false; }
-        }
-
-        score = Number(line[nums.length]);
-        previous_score = Number(p_line[nums.length]);
-        if (same) {undone = false};
-        if (zeros) { generateNums(Math.floor(Math.random()*(1.3) + 1.85)); }
-    } catch {
-        return;
-    }    
-}
-
 function addLeader(name, up_score){
-    let changed = false;
+    let leader_changed = false;
     for (let index = 0; index < leaders_s.length; index++){
         if (leaders_s[index] < up_score){
-            changed = true;
+            leader_changed = true;
             let currentDate = new Date();
             leaders_s.splice(index, 0, up_score);
             leaders_n.splice(index, 0, name);
@@ -326,7 +357,7 @@ function addLeader(name, up_score){
         }
     }
 
-    if (leaders_s.length < 10 & !changed) {
+    if (leaders_s.length < 10 & !leader_changed) {
         let currentDate = new Date();
         leaders_s.push(up_score);
         leaders_n.push(name);
@@ -348,13 +379,13 @@ function initiateBlock(){
     restart.classList.add("no-select");
     restart.id = "restart_button";
     restart.textContent = "Начать заново";
-    document.body.appendChild(restart);
+    container.appendChild(restart);
 
     undo.classList.add("undo_button");
     undo.classList.add("no-select");
     undo.id = "undo_button";
     undo.textContent = "Отмена хода";
-    document.body.appendChild(undo);
+    container.appendChild(undo);
 }
 
 restart.addEventListener("click", () => {
@@ -366,48 +397,58 @@ undo.addEventListener("click", () => {
     if (!undone){
         undone = true;
         score = previous_score;
-        for (let index = 0; index < nums.length; index++){
-            nums[index] = previous[index];
-        }
-        updatePlayground();
-        saveGame();
+        deleteCells();
+        animateUndo(function (){
+            saveGame();
+            for (let index = 0; index < nums.length; index++){
+                nums[index] = boxes[index] != null ? Number(boxes[index].textContent) : 0;
+            }
+            score = previous_score;
+            score_amount.textContent = score;
+        });
     }
 })
 
 function initiate(){
     initiateVariables();
-    initiateScore();
-    generateNums(Math.floor(Math.random()*(1.3) + 1.85));
 
     if (restart.id == "") {
+        initiateScore();
         initiateCells();
         initiateBlock();
         initiateDialog();
         loadLeaders();
-        loadGame();
         initiateLeaderboard();
+        loadGame();
+    } else {
+        score_amount.textContent = "0";
+        generateNums(Math.floor(Math.random()*(1.3) + 1.85));
+        news = [];
     }
 
     makeLeaderboard();
-
-    updatePlayground();
 }
 
 function generateNums(amount=2){
+    console.log(amount);
+    news = [];
     count = Math.min(amount, 16 - ns);
     while (count > 0){
         const ind = Math.floor(Math.random()*(16));
         if (nums[ind] == 0){
             const a = 2 * Math.floor(Math.random()*(1.15) + 1);
             nums[ind] = a; 
+            news.push([ind, a])
             count--;
         }
     }
+    addCells();
 }
 
 function checkPlayground(){
     let neighboors = [-1, 1, -4, 4];
     let stuck = true;
+    let no_match = false;
     ns = 0;
     for (let index = 0; index < nums.length; index++){
         if (nums[index] == 0) { 
@@ -428,12 +469,32 @@ function checkPlayground(){
     return stuck;
 }
 
-// function printBoxes(){
-//     for (let index = 0; index < boxes.length; index ++){
-//         if (boxes[index] == null) {continue; }
-//         console.log(index, boxes[index].textContent, boxes[index].toString());
-//     }
-// }
+function addCells(){
+    for (let index = 0; index < news.length; index++){
+        if (boxes[news[index][0]] != null) { continue; }
+        const box = document.createElement("div");
+        box.classList.add("num_box");
+        box.classList.add("no-select");
+        box.textContent = `${news[index][1]}`;
+        box.classList.add(`nb${news[index][1]}`);
+
+        box.style.position = "absolute";
+        box.style.insetInlineStart = "50%";
+        box.style.insetBlockStart = "50%";
+        box.style.marginLeft = ((news[index][0] % 4  - 2) * pos + 5) + 'px';
+        box.style.marginTop = ((Math.floor(news[index][0] / 4)  - 2) * pos + 5) +'px';
+        
+        boxes[news[index][0]] = box;
+        container.appendChild(box);
+    }
+}
+
+function deleteCells(){
+    for (let index = 0; index < news.length; index++){
+        container.removeChild(boxes[news[index][0]]);
+        boxes[news[index][0]] = null;
+    }
+}
 
 function makeTraces(){
     traces = [];
@@ -442,7 +503,7 @@ function makeTraces(){
         if (traces.length == 0){
             traces.push(moves[index]);
         } else if (traces[traces.length - 1][1] == moves[index][1] &&
-            traces[traces.length - 1][2] == moves[index][0]){
+                    traces[traces.length - 1][2] == moves[index][0]){
             traces[traces.length - 1][2] = moves[index][2];
             traces[traces.length - 1][3] = moves[index][3];
         } else {
@@ -450,54 +511,184 @@ function makeTraces(){
         }
         index++;
     }
+    makeBackTraces();
 }
 
-function animate(callback){
-    if (traces.length == 0) { return; }
+function makeBackTraces(){
+    back_traces = [];
+    index = 1;
+    let pr = index - 1;
+    back_traces.push([traces[pr][2], traces[pr][1], traces[pr][0], traces[pr][3]]);
+
+    while (index < traces.length){
+        back_traces.push([traces[index][2], traces[index][1], traces[index][0], traces[index][3]]);
+        if (back_traces[pr][0] == back_traces[index][0] &&
+            back_traces[pr][1] == back_traces[index][1] &&
+            back_traces[pr][3] == 0){
+            back_traces[index][0] = back_traces[pr][2];
+            pr--;
+        }
+        if (pr > -1 && index - pr > 1){
+            if (back_traces[pr][0] == back_traces[index][2] &&
+                2 * back_traces[pr][1] == back_traces[index][3]){
+                back_traces[index][2] = back_traces[pr][2];
+                back_traces[pr][1] = -1;
+                pr++;
+            }
+        }
+        pr++;
+        index++;
+    }
+}
+
+function animateUndo(callback){
+    if (back_traces.length == 0) { return; }
     let c = 0;
+    free = false;
 
     let timer = setInterval(function() {
 
         if (c == 30) {
             clearInterval(timer);
             callback();
+            free = true;
+            return;
+        }
+        
+        for (let index = back_traces.length - 1; index > -1; index--) {
+            let elem = boxes[back_traces[index][0]];
+            if (back_traces[index][1] == -1) { continue; }
+            if (elem != null){
+                updateUndoCell(elem, index);
+            }
+
+            const cur_cord = back_traces[index][2];
+            elem = boxes[cur_cord];
+            if (elem == null) { continue; }
+            const dest_cord = back_traces[index][0];
+            const dest_l = ((cur_cord % 4  - 2) * pos + 5);
+            const dest_t = ((Math.floor(cur_cord / 4)  - 2) * pos + 5);
+            const dir_l = Math.sign(dest_cord % 4 - cur_cord % 4);
+            const dir_t = Math.sign(Math.floor(dest_cord / 4) - Math.floor(cur_cord / 4));
+            st = draw(elem, 7 * (-dir_l), 7 * (-dir_t));
+            if (st[0] + 7 * (-dir_l) == dest_l &&
+                st[1] + 7 * (-dir_t) == dest_t) {
+                    back_traces[index][1] = -1;
+            }
+        }
+        c++;
+
+    }, 3);
+}
+
+
+function updateUndoCell(elem, ind) {
+    if (Number(elem.textContent) > back_traces[ind][1] &&
+        boxes[back_traces[ind][2]] == null &&
+        back_traces[ind][3] != 0 &&
+        elem.style.marginLeft == `${((back_traces[ind][0] % 4  - 2) * pos + 5)}px` &&
+        elem.style.marginTop == `${((Math.floor(back_traces[ind][0] / 4)  - 2) * pos + 5)}px`) {
+
+        const box = document.createElement('div');
+        box.classList.add("num_box");
+        box.classList.add("no-select");
+        box.textContent = `${back_traces[ind][3]}`;
+        box.classList.add(`nb${back_traces[ind][3]}`);
+
+        box.style.position = "absolute";
+        box.style.insetInlineStart = "50%";
+        box.style.insetBlockStart = "50%";
+        box.style.marginLeft = ((back_traces[ind][0] % 4  - 2) * pos + 5) + 'px';
+        box.style.marginTop = ((Math.floor(back_traces[ind][0] / 4)  - 2) * pos + 5) +'px';
+
+        container.appendChild(box);
+        boxes[back_traces[ind][2]] = box;
+
+        boxes[back_traces[ind][0]].classList.remove(`nb${Number(boxes[back_traces[ind][0]].textContent)}`);
+        boxes[back_traces[ind][0]].classList.add(`nb${Number(boxes[back_traces[ind][0]].textContent) - back_traces[ind][1]}`);
+        boxes[back_traces[ind][0]].textContent = `${Number(boxes[back_traces[ind][0]].textContent) - back_traces[ind][1]}`;
+    }
+    if (back_traces[ind][3] == 0 &&
+        boxes[back_traces[ind][2]] == null){
+        boxes[back_traces[ind][2]] = elem;
+        boxes[back_traces[ind][0]] = null;
+    }
+}
+
+function animate(callback){
+    if (traces.length == 0) { return; }
+    let c = 0;
+    let minuses = 0;
+    free = false;
+    for (let a_ind = 0; a_ind < traces.length; a_ind++) { traces_users.push(null); }
+
+    let timer = setInterval(function() {
+        if (minuses == traces.length || c == 30) {
+            clearInterval(timer);
+            callback();
+            free = true;
+            traces_users = [];
+            return;
         }
         
         for (let index = 0; index < traces.length; index++) {
             const cur_cord = traces[index][0];
             const elem = boxes[cur_cord];
-            if (elem == null || traces[index][1] != Number(elem.textContent) || traces[index][1] == -1) { continue; }
+            if (elem == null || traces[index][1] != Number(elem.textContent) ||
+                findIndexOf(traces_users, elem) != index &&
+                findIndexOf(traces_users, elem) != -1) { continue; }
+            if (traces_users[index] == null) {traces_users[index] = elem;}
             const dest_cord = traces[index][2];
-            const dest_l = ((dest_cord % 4  - 2) * 70 + 5);
-            const dest_t = ((Math.floor(dest_cord / 4)  - 2) * 70 + 5);
+            const dest_l = ((dest_cord % 4  - 2) * pos + 5);
+            const dest_t = ((Math.floor(dest_cord / 4)  - 2) * pos + 5);
             const dir_l = Math.sign(cur_cord % 4 - dest_cord % 4);
             const dir_t = Math.sign(Math.floor(cur_cord / 4) - Math.floor(dest_cord / 4));
-            draw(elem, 7 * (-dir_l), 7 * (-dir_t), dest_l, dest_t, index);
+            st = draw(elem, 7 * (-dir_l), 7 * (-dir_t));
+            minuses += updateCell(st, dir_l, dir_t, dest_l, dest_t, index);
         }
         c++;
 
-    }, 5);
+    }, 3);
 }
 
-function draw(elem, left, top, dest_l, dest_t, ind) {
+function findIndexOf(array, element){
+    for (let fio_ind = 0; fio_ind < array.length; fio_ind++) {
+        if (array[fio_ind] == element) {return fio_ind;}
+    }
+    return -1;
+}
+
+function draw(elem, left, top) {
     const st_l = Number(elem.style.marginLeft.slice(0, elem.style.marginLeft.length - 2));
     if (left != 0) { elem.style.marginLeft = st_l + left + 'px'; }
     const st_t = Number(elem.style.marginTop.slice(0, elem.style.marginTop.length - 2));
     if (top != 0) { elem.style.marginTop = st_t + top + 'px'; }
     
-    if (st_l + left == dest_l &&
-        st_t + top == dest_t) {
-            if (boxes[traces[ind][2]] != null) { container.removeChild(boxes[traces[ind][2]]); }
-            boxes[traces[ind][2]] = boxes[traces[ind][0]];
-            if (traces[ind][3] != 0){
-                boxes[traces[ind][2]].textContent = `${2 * traces[ind][1]}`;
-                boxes[traces[ind][2]].classList.remove(`nb${traces[ind][1]}`);
-                boxes[traces[ind][2]].classList.add(`nb${2 * traces[ind][1]}`);
+    return [st_l, st_t]
+}
+
+function updateCell(uc_st, uc_dir_l, uc_dir_t, uc_dest_l, uc_dest_t, uc_ind) {
+    if (uc_st[0] + 7 * (-uc_dir_l) == uc_dest_l &&
+        uc_st[1] + 7 * (-uc_dir_t) == uc_dest_t) {
+            let uc_num = 0;
+            if (boxes[traces[uc_ind][2]] != null) { 
+                uc_num += Number(boxes[traces[uc_ind][2]].textContent);
+                container.removeChild(boxes[traces[uc_ind][2]]);
             }
-            boxes[traces[ind][0]] = null;
-            traces[ind][1] = -1;
-            printBoxes();
+            if (traces[uc_ind][3] != 0){
+                uc_num += Number(boxes[traces[uc_ind][0]].textContent);
+                boxes[traces[uc_ind][0]].classList.remove(`nb${boxes[traces[uc_ind][0]].textContent}`);
+                boxes[traces[uc_ind][0]].textContent = `${uc_num}`;
+                boxes[traces[uc_ind][0]].classList.add(`nb${uc_num}`);
+            }
+            boxes[traces[uc_ind][2]] = boxes[traces[uc_ind][0]];
+            boxes[traces[uc_ind][0]] = null;
+            traces[uc_ind][1] = -1;
+            traces_users[uc_ind] = -1;
+            return 1;
     }
+    return 0;
+
 }
 
 function clearBoxes() {
@@ -514,31 +705,9 @@ function clearBoxes() {
     }
 }
 
-function updatePlayground(){
-    for (let index = 0; index < nums.length; index++){
-        if (nums[index] == 0){ continue; }
-        if (boxes[index] != null){ continue; }
-        const box = document.createElement("div");
-        box.classList.add("num_box");
-        box.classList.add("no-select");
-        box.textContent = `${nums[index]}`;
-        box.classList.add(`nb${nums[index]}`);
-
-        box.style.position = "absolute";
-        box.style.insetInlineStart = "50%";
-        box.style.insetBlockStart = "50%";
-        box.style.marginLeft = ((index % 4  - 2) * 70 + 5) + 'px';
-        box.style.marginTop = ((Math.floor(index / 4)  - 2) * 70 + 5) +'px';
-        
-        boxes[index] = box;
-        container.append(box);
-    }
-    score_amount.textContent = score;
-}
-
 function changeColumn(column, direction){
     col = direction > 0 ? column + 4: column + 8;
-    let changed = false;
+    let col_changed = false;
 
     while(true){
         if (col > 15 || col < 0){ break; }
@@ -548,23 +717,24 @@ function changeColumn(column, direction){
             continue; 
         }
 
+        // make traces here
         if (nums[col - 4 * direction] == nums[col] || nums[col - 4 * direction] == 0){
             moves.push([col, nums[col], col - 4 * direction, nums[col - 4 * direction]]);
             score += 2 * nums[col - 4 * direction];
             nums[col - 4 * direction] += nums[col];
             nums[col] = 0;
             col = direction > 0 ? Math.max(col - 4 * direction, column + 4): Math.min(col - 4 * direction, column + 8);
-            changed = true;
+            col_changed = true;
             continue;
         }
         col += 4 * direction;
     }
-    return changed;
+    return col_changed;
 }
 
 function changeRow(row, direction){
     r = direction > 0 ? row + 1: row + 2;
-    let changed = false;
+    let row_changed = false;
 
     while(true){
         if (r > row + 3 || r < row){ break; }
@@ -574,69 +744,61 @@ function changeRow(row, direction){
             continue; 
         }
 
+        // make traces here
         if (nums[r - direction] == nums[r] || nums[r - direction] == 0){
             moves.push([r, nums[r], r - direction, nums[r - direction]]);
             score += 2 * nums[r - direction];
             nums[r - direction] += nums[r];
             nums[r] = 0;
             r = direction > 0 ? Math.max(r - direction, row + 1): Math.min(r - direction, row + 2);
-            changed = true;
+            row_changed = true;
             continue;
         }
         r += direction;
     }
     
-    return changed;
+    return row_changed;
 }
 
-function updateStory(sup_new){
+function updateStory(){
     undone = false;
-    for (let index = 0; index < nums.length; index++){
-        previous[index] = sup_new[index];
-    }
-
-    previous_moves = moves;
     moves = [];
 }
 
 function move(direction){
-    let sup_new = [];
     let sup_score = score;
-    for (let index = 0; index < 16; index++){
-        sup_new.push(nums[index]);
-    }
     let index = 0;
-    let changed = false;
+    let move_changed = false;
 
     if (direction == "up" || direction == "down"){
         dir = (direction == "up") ? 1 : -1;
         while (index < 4){
-            changed += changeColumn(index, dir);
+            move_changed += changeColumn(index, dir);
             index++;
         }
     } else {
         dir = (direction == "left") ? 1 : -1;
         while (index < 16){
-            changed += changeRow(index, dir);
+            move_changed += changeRow(index, dir);
             index += 4;
         }
     }
     
-    if (changed){
+    if (move_changed){
         previous_score = sup_score;
+        score_amount.textContent = score;
         makeTraces();
         animate(function (){
-            updatePlayground();
-        });
-        updateStory(sup_new);
-        generateNums(Math.floor(Math.random()*(1.3) + 1));
-        saveGame(); 
+            updateStory();
+            generateNums(Math.floor(Math.random()*(1.3) + 1));
+            saveGame(); 
 
-        if (checkPlayground()) {
-            saveGame(false);
-            free = false;
-            modal_element.showModal();
-        }
+            if (checkPlayground()) {
+                saveGame(false);
+                free = false;
+                modal_element.showModal();
+            }
+        });
     }
 }
 
@@ -667,6 +829,7 @@ function TouchStart(e){
 }
 
 function TouchEnd(e){
+    if (!free) { return -1; }
     const sensivity = 20;
     const xs = x - e.changedTouches[0].clientX;
     const ys = y - e.changedTouches[0].clientY;
