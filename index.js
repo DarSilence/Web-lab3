@@ -280,7 +280,7 @@ function loadGame(){
         let same = true;
 
         line = localStorage.getItem("0").split("-");
-        if (line[0] != "t3") {initiate();}
+        if (line[0] != "t3") {initiate(); return;}
         line = line.slice(1);
 
         score = Number(line[1]);
@@ -421,7 +421,7 @@ function initiate(){
         initiateLeaderboard();
         loadGame();
     } else {
-        score_amount.textContent = "0";
+        score_amount.textContent = 0;
         generateNums(Math.floor(Math.random()*(1.3) + 1.85));
         news = [];
     }
@@ -855,3 +855,4 @@ function TouchEnd(e){
 
 document.addEventListener("touchstart", function (e) { TouchStart(e); });
 document.addEventListener("touchend", function (e) { TouchEnd(e); });
+
