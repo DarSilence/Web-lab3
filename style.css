@@ -20,112 +20,65 @@ input.modal_input::placeholder {
 }
 
 .name_header{
-    width: 130px;
-    height: 40px;
     position: absolute;
     inset-inline-start: 50%;
     inset-block-start: 50%;
-    margin: -255px 0 0 -145px;
     text-align: center;
-    font-size: 30pt;
-    font-weight: 800;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(45deg, #ff6f61, #6a82fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
 }
 
 .score_block{
     display: grid;
-    grid-template-columns: 130px;
-    grid-template-rows: 10px 40px;
     position: absolute;
     inset-inline-start: 50%;
     inset-block-start: 50%;
-    margin: -255px 0 0 10px;
 }
 
 .score_name{
-    width: 135px;
-    height: 10px;
     position: relative;
     text-align: center;
-    font-size: 14pt;
 }
 
 .current_score{
-    width: 135px;
-    height: 40px;
     position: relative;
     text-align: center;
-    font-size: 30pt;
-    font-weight: 800;
 }
 
 .leaderboard_button{
-    width: 130px;
-    height: 40px;
     position: absolute;
     inset-inline-start: 50%;
     inset-block-start: 50%;
-    margin: -195px 0 0 -145px;
     text-align: center;
-    font-size: 12pt;
 }
 
 .restart_button{
     position: absolute;
     inset-inline-start: 50%;
     inset-block-start: 50%;
-    margin: 155px 0 0 10px;
-    width: 135px;
-    height: 40px;
     text-align: center;
-    font-size: 12pt;
 }
 
 .undo_button{
     position: absolute;
     inset-inline-start: 50%;
     inset-block-start: 50%;
-    margin: 155px 0 0 -145px;
-    width: 135px;
-    height: 40px;
     text-align: center;
-    font-size: 12pt;
 }
 
-/* .container{
-    width: 270px;
-    height: 270px;
-    display: grid;
-    position: absolute;
-    inset-inline-start: 50%;
-    inset-block-start: 50%;
-    margin: -155px 0 0 -155px;
-    padding: 10px 10px 10px 10px;
-    grid-template-columns: repeat(4, 60px);
-    grid-template-rows: repeat(4, 60px);
-    gap: 10px;
-    text-align: center;
-} */
-
 .playground{
-    width: 270px;
-    height: 270px;
     background-color: rgb(119, 108, 76);
     display: grid;
     position: absolute;
     inset-inline-start: 50%;
     inset-block-start: 50%;
-    margin: -145px 0 0 -145px;
-    padding: 10px 10px 10px 10px;
-    grid-template-columns: repeat(4, 60px);
-    grid-template-rows: repeat(4, 60px);
-    gap: 10px;
     text-align: center;
 }
 
 .num_box{
-    width: 60px;
-    height: 60px;
-    line-height: 60px;
     text-align: center;
     background-color:  rgb(211, 191, 132);
 }
@@ -196,4 +149,210 @@ input.modal_input::placeholder {
 
 .nb131072{
     background-color:  rgb(255, 72, 0);
+}
+
+@media (min-width: 320px) and (max-width: 767px) {
+    .name_header{
+        width: 130px;
+        height: 80px;
+        margin: -265px 0 0 -135px;
+        font-size: 34pt;
+        font-weight: 800;
+    }
+
+    .score_block{
+        grid-template-columns: 130px;
+        grid-template-rows: 10px 40px;
+        margin: -245px 0 0 20px;
+    }
+
+    .score_name{
+        width: 135px;
+        height: 10px;
+        font-size: 14pt;    
+    }
+
+    .current_score{
+        width: 135px;
+        height: 40px;
+        font-size: 30pt;
+        font-weight: 800;
+    }
+
+    .num_box{
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+    }
+
+    .playground{
+        width: 270px;
+        height: 270px;
+        margin: -135px 0 0 -135px;
+        padding: 10px 10px 10px 10px;
+        grid-template-columns: repeat(4, 60px);
+        grid-template-rows: repeat(4, 60px);
+        gap: 10px;
+    }
+
+    .undo_button{
+        margin: 165px 0 0 -135px;
+        width: 135px;
+        height: 40px;
+        font-size: 12pt;
+    }
+
+    .restart_button{
+        margin: 165px 0 0 20px;
+        width: 135px;
+        height: 40px;
+        font-size: 12pt;
+    }
+
+    .leaderboard_button{
+        width: 130px;
+        height: 40px;
+        margin: -185px 0 0 -135px;
+        font-size: 12pt;
+    }
+}
+
+@media (min-width: 767px) and (max-width: 1024px) {
+    .name_header{
+        width: 175px;
+        height: 80px;
+        margin: -325px 0 0 -175px;
+        font-size: 34pt;
+        font-weight: 900;
+    }
+
+    .score_block{
+        grid-template-columns: 175px;
+        grid-template-rows: 20px 60px;
+        margin: -305px 0 0 20px;
+    }
+
+    .score_name{
+        width: 175px;
+        height: 20px;
+        font-size: 20pt; 
+        font-weight: 700;   
+    }
+
+    .current_score{
+        width: 175px;
+        height: 60px;
+        font-size: 34pt;
+        font-weight: 900;
+    }
+
+    .num_box{
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        font-size: 18pt;
+    }
+
+    .playground{
+        width: 350px;
+        height: 350px;
+        margin: -175px 0 0 -175px;
+        padding: 10px 10px 10px 10px;
+        grid-template-columns: repeat(4, 80px);
+        grid-template-rows: repeat(4, 80px);
+        gap: 10px;
+    }
+
+    .undo_button{
+        margin: 205px 0 0 -175px;
+        width: 175px;
+        height: 40px;
+        font-size: 16pt;
+    }
+
+    .restart_button{
+        margin: 205px 0 0 20px;
+        width: 175px;
+        height: 40px;
+        font-size: 16pt;
+    }
+
+    .leaderboard_button{
+        width: 175px;
+        height: 60px;
+        margin: -245px 0 0 -175px;
+        font-size: 18pt;
+    }
+}
+
+@media (min-width: 1024px) {
+    .name_header{
+        width: 220px;
+        height: 80px;
+        margin: -390px 0 0 -220px;
+        font-size: 46pt;
+        font-weight: 1000;
+    }
+
+    .score_block{
+        grid-template-columns: 220px;
+        grid-template-rows: 30px 80px;
+        margin: -380px 0 0 20px;
+    }
+
+    .score_name{
+        width: 220px;
+        height: 30px;
+        font-size: 26pt;   
+        font-weight: 700; 
+    }
+
+    .current_score{
+        width: 220px;
+        height: 80px;
+        font-size: 42pt;
+        font-weight: 1000;
+    }
+
+    .num_box{
+        width: 100px;
+        height: 100px;
+        line-height: 100px;
+        font-size: 22pt;
+        font-weight: 800;
+    }
+
+    .playground{
+        width: 430px;
+        height: 430px;
+        margin: -220px 0 0 -220px;
+        padding: 15px 15px 15px 15px;
+        grid-template-columns: repeat(4, 100px);
+        grid-template-rows: repeat(4, 100px);
+        gap: 10px;
+    }
+
+    .undo_button{
+        margin: 250px 0 0 -220px;
+        width: 220px;
+        height: 60px;
+        font-size: 20pt;
+        font-weight: 700;
+    }
+
+    .restart_button{
+        margin: 250px 0 0 20px;
+        width: 220px;
+        height: 60px;
+        font-size: 20pt;
+        font-weight: 700;
+    }
+
+    .leaderboard_button{
+        width: 220px;
+        height: 60px;
+        margin: -290px 0 0 -220px;
+        font-size: 17pt;
+        font-weight: 700;
+    }
 }
