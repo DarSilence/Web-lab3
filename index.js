@@ -9,12 +9,13 @@ let y;
 let leaders_n = [];
 let leaders_s = [];
 let leaders_d = [];
-let moves = [];
+var audio = new Audio('components\\1.mp3');
 let boxes = [];
 let traces = [];
 let traces_users = [];
 let back_traces = [];
 let news = [];
+let pos;
 
 const container = document.getElementById("container");
 
@@ -45,9 +46,12 @@ const undo = document.createElement("button");
 const leaderboard = document.getElementById("leaderboard");
 const leaderboard_button = document.createElement("button");
 
-const pos = 70;
 
 function initiateVariables(){
+    if (window.screen.height <= 540) {screen.orientation.lock("portrait");}
+    if (window.screen.width >= 1024){ pos = 110;}
+    else if (window.screen.width >= 767){ pos = 90;}
+    else { pos = 70; }
     score = 0;
     previous_score = 0;
     nums = [0, 0, 0, 0,
@@ -130,6 +134,23 @@ function initiateScore(){
     score_bar.appendChild(score_amount);
 }
 
+function checkPos(){
+    let timer = setInterval(function() {
+        let remake = false;
+        if (window.screen.width >= 1024 && pos != 110){ pos = 110; remake = true;}
+        else if (window.screen.width >= 767 && window.screen.width < 1024 && pos != 90){ pos = 90; remake = true;}
+        else if (window.screen.width < 767 && pos != 70) { pos = 70; remake = true;}
+        
+        if (remake) {
+            for (let cp_index = 0; cp_index < boxes.length; cp_index++){
+                if (boxes[cp_index] == null) {continue;}
+                boxes[cp_index].style.marginLeft = ((cp_index % 4  - 2) * pos + 15) + 'px';
+                boxes[cp_index].style.marginTop = ((Math.floor(cp_index / 4)  - 2) * pos + 15) +'px';
+            }
+        }
+    }, 500)
+}
+
 function initiateCells(){
     for (let index = 0; index < 16; index++){
         box = document.createElement("div");
@@ -137,6 +158,8 @@ function initiateCells(){
         box.classList.add("no-select");
         playground.appendChild(box);
     }
+
+    checkPos();
 }
 
 function initiateDialog(){
@@ -392,6 +415,7 @@ restart.addEventListener("click", () => {
 
 undo.addEventListener("click", () => {
     if (!undone){
+        audio.play();
         undone = true;
         score = previous_score;
         deleteCells();
@@ -419,6 +443,8 @@ function initiate(){
         loadGame();
     } else {
         score_amount.textContent = 0;
+        score = 0;
+        previous_score = 0;
         generateNums(Math.floor(Math.random()*(1.3) + 1.85));
         news = [];
     }
@@ -445,7 +471,6 @@ function generateNums(amount=2){
 function checkPlayground(){
     let neighboors = [-1, 1, -4, 4];
     let stuck = true;
-    let no_match = false;
     ns = 0;
     for (let index = 0; index < nums.length; index++){
         if (nums[index] == 0) { 
@@ -478,8 +503,8 @@ function addCells(){
         box.style.position = "absolute";
         box.style.insetInlineStart = "50%";
         box.style.insetBlockStart = "50%";
-        box.style.marginLeft = ((news[index][0] % 4  - 2) * pos + 5) + 'px';
-        box.style.marginTop = ((Math.floor(news[index][0] / 4)  - 2) * pos + 5) +'px';
+        box.style.marginLeft = ((news[index][0] % 4  - 2) * pos + 15) + 'px';
+        box.style.marginTop = ((Math.floor(news[index][0] / 4)  - 2) * pos + 15) +'px';
         
         boxes[news[index][0]] = box;
         container.appendChild(box);
@@ -491,24 +516,6 @@ function deleteCells(){
         container.removeChild(boxes[news[index][0]]);
         boxes[news[index][0]] = null;
     }
-}
-
-function makeTraces(){
-    traces = [];
-    index = 0;
-    while (index < moves.length){
-        if (traces.length == 0){
-            traces.push(moves[index]);
-        } else if (traces[traces.length - 1][1] == moves[index][1] &&
-                    traces[traces.length - 1][2] == moves[index][0]){
-            traces[traces.length - 1][2] = moves[index][2];
-            traces[traces.length - 1][3] = moves[index][3];
-        } else {
-            traces.push(moves[index]);
-        }
-        index++;
-    }
-    makeBackTraces();
 }
 
 function makeBackTraces(){
@@ -563,13 +570,13 @@ function animateUndo(callback){
             elem = boxes[cur_cord];
             if (elem == null) { continue; }
             const dest_cord = back_traces[index][0];
-            const dest_l = ((cur_cord % 4  - 2) * pos + 5);
-            const dest_t = ((Math.floor(cur_cord / 4)  - 2) * pos + 5);
+            const dest_l = ((cur_cord % 4  - 2) * pos + 15);
+            const dest_t = ((Math.floor(cur_cord / 4)  - 2) * pos + 15);
             const dir_l = Math.sign(dest_cord % 4 - cur_cord % 4);
             const dir_t = Math.sign(Math.floor(dest_cord / 4) - Math.floor(cur_cord / 4));
-            st = draw(elem, 7 * (-dir_l), 7 * (-dir_t));
-            if (st[0] + 7 * (-dir_l) == dest_l &&
-                st[1] + 7 * (-dir_t) == dest_t) {
+            st = draw(elem, pos/10 * (-dir_l), pos/10 * (-dir_t));
+            if (st[0] + pos/10 * (-dir_l) == dest_l &&
+                st[1] + pos/10 * (-dir_t) == dest_t) {
                     back_traces[index][1] = -1;
             }
         }
@@ -583,8 +590,8 @@ function updateUndoCell(elem, ind) {
     if (Number(elem.textContent) > back_traces[ind][1] &&
         boxes[back_traces[ind][2]] == null &&
         back_traces[ind][3] != 0 &&
-        elem.style.marginLeft == `${((back_traces[ind][0] % 4  - 2) * pos + 5)}px` &&
-        elem.style.marginTop == `${((Math.floor(back_traces[ind][0] / 4)  - 2) * pos + 5)}px`) {
+        elem.style.marginLeft == `${((back_traces[ind][0] % 4  - 2) * pos + 15)}px` &&
+        elem.style.marginTop == `${((Math.floor(back_traces[ind][0] / 4)  - 2) * pos + 15)}px`) {
 
         const box = document.createElement('div');
         box.classList.add("num_box");
@@ -595,8 +602,8 @@ function updateUndoCell(elem, ind) {
         box.style.position = "absolute";
         box.style.insetInlineStart = "50%";
         box.style.insetBlockStart = "50%";
-        box.style.marginLeft = ((back_traces[ind][0] % 4  - 2) * pos + 5) + 'px';
-        box.style.marginTop = ((Math.floor(back_traces[ind][0] / 4)  - 2) * pos + 5) +'px';
+        box.style.marginLeft = ((back_traces[ind][0] % 4  - 2) * pos + 15) + 'px';
+        box.style.marginTop = ((Math.floor(back_traces[ind][0] / 4)  - 2) * pos + 15) +'px';
 
         container.appendChild(box);
         boxes[back_traces[ind][2]] = box;
@@ -636,11 +643,11 @@ function animate(callback){
                 findIndexOf(traces_users, elem) != -1) { continue; }
             if (traces_users[index] == null) {traces_users[index] = elem;}
             const dest_cord = traces[index][2];
-            const dest_l = ((dest_cord % 4  - 2) * pos + 5);
-            const dest_t = ((Math.floor(dest_cord / 4)  - 2) * pos + 5);
+            const dest_l = ((dest_cord % 4  - 2) * pos + 15);
+            const dest_t = ((Math.floor(dest_cord / 4)  - 2) * pos + 15);
             const dir_l = Math.sign(cur_cord % 4 - dest_cord % 4);
             const dir_t = Math.sign(Math.floor(cur_cord / 4) - Math.floor(dest_cord / 4));
-            st = draw(elem, 7 * (-dir_l), 7 * (-dir_t));
+            st = draw(elem, pos/10 * (-dir_l), pos/10 * (-dir_t));
             minuses += updateCell(st, dir_l, dir_t, dest_l, dest_t, index);
         }
         c++;
@@ -665,8 +672,8 @@ function draw(elem, left, top) {
 }
 
 function updateCell(uc_st, uc_dir_l, uc_dir_t, uc_dest_l, uc_dest_t, uc_ind) {
-    if (uc_st[0] + 7 * (-uc_dir_l) == uc_dest_l &&
-        uc_st[1] + 7 * (-uc_dir_t) == uc_dest_t) {
+    if (uc_st[0] + pos/10 * (-uc_dir_l) == uc_dest_l &&
+        uc_st[1] + pos/10 * (-uc_dir_t) == uc_dest_t) {
             let uc_num = 0;
             if (boxes[traces[uc_ind][2]] != null) { 
                 uc_num += Number(boxes[traces[uc_ind][2]].textContent);
@@ -714,9 +721,19 @@ function changeColumn(column, direction){
             continue; 
         }
 
-        // make traces here
         if (nums[col - 4 * direction] == nums[col] || nums[col - 4 * direction] == 0){
-            moves.push([col, nums[col], col - 4 * direction, nums[col - 4 * direction]]);
+            // moves.push([col, nums[col], col - 4 * direction, nums[col - 4 * direction]]);
+            
+            if (traces.length == 0){
+                traces.push([col, nums[col], col - 4 * direction, nums[col - 4 * direction]]);
+            } else if (traces[traces.length - 1][1] == nums[col] &&
+                        traces[traces.length - 1][2] == col){
+                traces[traces.length - 1][2] = col - 4 * direction;
+                traces[traces.length - 1][3] = nums[col - 4 * direction];
+            } else {
+                traces.push([col, nums[col], col - 4 * direction, nums[col - 4 * direction]]);
+            }
+
             score += 2 * nums[col - 4 * direction];
             nums[col - 4 * direction] += nums[col];
             nums[col] = 0;
@@ -741,9 +758,19 @@ function changeRow(row, direction){
             continue; 
         }
 
-        // make traces here
         if (nums[r - direction] == nums[r] || nums[r - direction] == 0){
-            moves.push([r, nums[r], r - direction, nums[r - direction]]);
+            // moves.push([r, nums[r], r - direction, nums[r - direction]]);
+            
+            if (traces.length == 0){
+                traces.push([r, nums[r], r - direction, nums[r - direction]]);
+            } else if (traces[traces.length - 1][1] == nums[r] &&
+                        traces[traces.length - 1][2] == r){
+                traces[traces.length - 1][2] = r - direction;
+                traces[traces.length - 1][3] = nums[r - direction];
+            } else {
+                traces.push([r, nums[r], r - direction, nums[r - direction]]);
+            }
+
             score += 2 * nums[r - direction];
             nums[r - direction] += nums[r];
             nums[r] = 0;
@@ -759,13 +786,15 @@ function changeRow(row, direction){
 
 function updateStory(){
     undone = false;
-    moves = [];
+    // moves = [];
+    traces=[];
 }
 
 function move(direction){
     let sup_score = score;
     let index = 0;
     let move_changed = false;
+    // traces=[];
 
     if (direction == "up" || direction == "down"){
         dir = (direction == "up") ? 1 : -1;
@@ -780,11 +809,17 @@ function move(direction){
             index += 4;
         }
     }
+    // console.log("moves");
+    // console.log(moves.toString());
+    // console.log("traces");
+    // console.log(traces.toString());
+    // traces=[];
     
     if (move_changed){
         previous_score = sup_score;
         score_amount.textContent = score;
-        makeTraces();
+        // makeTraces();
+        makeBackTraces();
         animate(function (){
             updateStory();
             generateNums(Math.floor(Math.random()*(1.3) + 1));
@@ -800,6 +835,10 @@ function move(direction){
 }
 
 initiate();
+
+document.addEventListener('any', () => {
+
+});
 
 document.addEventListener('keydown', (event) => {
     if (!free) { return -1; }
@@ -852,6 +891,3 @@ function TouchEnd(e){
 
 document.addEventListener("touchstart", function (e) { TouchStart(e); });
 document.addEventListener("touchend", function (e) { TouchEnd(e); });
-
-
-
