@@ -280,6 +280,7 @@ function loadGame(){
         let same = true;
 
         line = localStorage.getItem("t3g").split("-");
+        if (line == "") {initiate(); return;}
 
         score = Number(line[1]);
         score_amount.textContent = score;
@@ -851,5 +852,6 @@ function TouchEnd(e){
 
 document.addEventListener("touchstart", function (e) { TouchStart(e); });
 document.addEventListener("touchend", function (e) { TouchEnd(e); });
+
 
 
