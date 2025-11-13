@@ -48,10 +48,10 @@ const leaderboard_button = document.createElement("button");
 
 
 function initiateVariables(){
-    if (window.screen.height <= 540) {screen.orientation.lock("portrait");}
+    if (window.screen.height <= 540 || window.screen.width <= 540) {screen.orientation.lock("portrait");}
     if (window.screen.width >= 1024){ pos = 110;}
-    else if (window.screen.width >= 767){ pos = 90;}
-    else { pos = 70; }
+    else if (window.screen.width >= 767 && window.screen.width < 1024){ pos = 90;}
+    else if (window.screen.width < 767) { pos = 70;}
     score = 0;
     previous_score = 0;
     nums = [0, 0, 0, 0,
