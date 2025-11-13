@@ -225,7 +225,7 @@ function updateDialog(){
 }
 
 function saveGame(settings=true){
-    let line = "t3-";
+    let line = "";
     if (settings){
         for (let index = 0; index < boxes.length; index++){
             line += `${boxes[index] != null ? Math.log2(Number(boxes[index].textContent)) : 0}`;
@@ -249,14 +249,14 @@ function saveGame(settings=true){
     }
 
     try{
-        localStorage.setItem("0", `${line}`);
+        localStorage.setItem("t3g", `${line}`);
     } catch {
         return;
     }
 }
 
 function saveLeaders(){
-    let line = "t3-";
+    let line = "";
     for (let index = 0; index < leaders_s.length - 1; index++){
         line += `${leaders_n[index]} ${leaders_s[index]} ${leaders_d[index]}\\`;
     }
@@ -265,7 +265,7 @@ function saveLeaders(){
     }
 
     try{
-        localStorage.setItem("1", `${line}`);
+        localStorage.setItem("t3l", `${line}`);
     } catch {
         return;
     }
@@ -279,9 +279,7 @@ function loadGame(){
         let zeros = true;
         let same = true;
 
-        line = localStorage.getItem("0").split("-");
-        if (line[0] != "t3") {initiate(); return;}
-        line = line.slice(1);
+        line = localStorage.getItem("t3g").split("-");
 
         score = Number(line[1]);
         score_amount.textContent = score;
@@ -326,10 +324,8 @@ function loadGame(){
 function loadLeaders(){
     try{
         let lines = "";
-        lines = localStorage.getItem("1");
+        lines = localStorage.getItem("t3l");
         if (lines == "") {return;}
-        if (lines.slice(0, 2) != "t3") {return;}
-        lines = lines.slice(2);
         lines.split("\\").forEach(line => {
             const leads = line.split(" ");
             let name = "";
@@ -855,4 +851,5 @@ function TouchEnd(e){
 
 document.addEventListener("touchstart", function (e) { TouchStart(e); });
 document.addEventListener("touchend", function (e) { TouchEnd(e); });
+
 
