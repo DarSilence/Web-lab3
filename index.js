@@ -9,7 +9,6 @@ let y;
 let leaders_n = [];
 let leaders_s = [];
 let leaders_d = [];
-// var audio = new Audio('components\\1.mp3');
 let boxes = [];
 let traces = [];
 let traces_users = [];
@@ -434,7 +433,6 @@ restart.addEventListener("click", () => {
 
 undo.addEventListener("click", () => {
     if (!undone){
-        // audio.play();
         undone = true;
         score = previous_score;
         deleteCells();
@@ -473,7 +471,6 @@ function initiate(){
 }
 
 function generateNums(amount=2){
-    console.log(amount);
     news = [];
     count = Math.min(amount, 16 - ns);
     while (count > 0){
@@ -741,9 +738,7 @@ function changeColumn(column, direction){
             continue; 
         }
 
-        if (nums[col - 4 * direction] == nums[col] || nums[col - 4 * direction] == 0){
-            // moves.push([col, nums[col], col - 4 * direction, nums[col - 4 * direction]]);
-            
+        if (nums[col - 4 * direction] == nums[col] || nums[col - 4 * direction] == 0){            
             if (traces.length == 0){
                 traces.push([col, nums[col], col - 4 * direction, nums[col - 4 * direction]]);
             } else if (traces[traces.length - 1][1] == nums[col] &&
@@ -778,9 +773,7 @@ function changeRow(row, direction){
             continue; 
         }
 
-        if (nums[r - direction] == nums[r] || nums[r - direction] == 0){
-            // moves.push([r, nums[r], r - direction, nums[r - direction]]);
-            
+        if (nums[r - direction] == nums[r] || nums[r - direction] == 0){            
             if (traces.length == 0){
                 traces.push([r, nums[r], r - direction, nums[r - direction]]);
             } else if (traces[traces.length - 1][1] == nums[r] &&
@@ -806,7 +799,6 @@ function changeRow(row, direction){
 
 function updateStory(){
     undone = false;
-    // moves = [];
     traces=[];
 }
 
@@ -814,7 +806,6 @@ function move(direction){
     let sup_score = score;
     let index = 0;
     let move_changed = false;
-    // traces=[];
 
     if (direction == "up" || direction == "down"){
         dir = (direction == "up") ? 1 : -1;
@@ -829,16 +820,10 @@ function move(direction){
             index += 4;
         }
     }
-    // console.log("moves");
-    // console.log(moves.toString());
-    // console.log("traces");
-    // console.log(traces.toString());
-    // traces=[];
     
     if (move_changed){
         previous_score = sup_score;
         score_amount.textContent = score;
-        // makeTraces();
         makeBackTraces();
         animate(function (){
             updateStory();
@@ -911,3 +896,4 @@ function TouchEnd(e){
 
 document.addEventListener("touchstart", function (e) { TouchStart(e); });
 document.addEventListener("touchend", function (e) { TouchEnd(e); });
+
