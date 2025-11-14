@@ -5,6 +5,70 @@
   user-select: none; /* Стандартный синтаксис */
 }
 
+.leaderboard{
+    margin: 20px auto;
+    border-collapse: collapse;
+    font-family: 'Arial', sans-serif;
+    background-color: #bbada0;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.leaderboard_h{
+    background-color: #eee4da;
+    color: #776e65;
+    text-align: center;
+    font-weight: bold;
+    margin: 25px 0 10px;
+    padding: 10px;
+}
+
+.leadertable{
+    display: block;
+    overflow-x: auto;
+} 
+
+.leaderboard_tr{
+    text-align:left;
+    color: #776e65;
+    border-top: 1px solid #ccc;
+}
+
+.leaderboard_tr:nth-child(even) td {
+    background-color: #ede0c8;
+    padding-left: 5px;
+}
+
+.leaderboard_tr:nth-child(odd) td {
+    background-color: #f9f6f2;
+    padding-left: 5px;
+}
+
+.leaderboard_tr:nth-child(1) td {
+    background-color: #bbada0;
+    color: #f9f6f2;
+    padding-left: 5px;
+}
+
+.close_leaderboard{
+    background-color: #8f7a66;
+    border: none;
+    font-family: 'Arial', sans-serif;
+    color: #f9f6f2;
+    cursor: pointer;
+    box-shadow: inset 0 0 5px rgba(255,255,255,0.3),
+                inset 0 0 10px rgba(0,0,0,0.2);
+    transition: background-color 0.3s, box-shadow 0.3s;
+    position: absolute;
+    font-size: medium;
+    top: 10px;
+    right: 15px;
+    width: 25px;
+    height: 25px;
+    border-radius: 8px;
+}
+
 .modal_paragraph{
     white-space: pre;
 }
@@ -53,6 +117,14 @@ input.modal_input::placeholder {
     inset-inline-start: 50%;
     inset-block-start: 50%;
     text-align: center;
+    background-color: #8f7a66;
+    border: none;
+    font-family: 'Arial', sans-serif;
+    color: #f9f6f2;
+    cursor: pointer;
+    box-shadow: inset 0 0 5px rgba(255,255,255,0.3),
+                inset 0 0 10px rgba(0,0,0,0.2);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .restart_button{
@@ -60,6 +132,14 @@ input.modal_input::placeholder {
     inset-inline-start: 50%;
     inset-block-start: 50%;
     text-align: center;
+    background-color: #8f7a66;
+    border: none;
+    font-family: 'Arial', sans-serif;
+    color: #f9f6f2;
+    cursor: pointer;
+    box-shadow: inset 0 0 5px rgba(255,255,255,0.3),
+                inset 0 0 10px rgba(0,0,0,0.2);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .undo_button{
@@ -67,6 +147,14 @@ input.modal_input::placeholder {
     inset-inline-start: 50%;
     inset-block-start: 50%;
     text-align: center;
+    background-color: #8f7a66;
+    border: none;
+    font-family: 'Arial', sans-serif;
+    color: #f9f6f2;
+    cursor: pointer;
+    box-shadow: inset 0 0 5px rgba(255,255,255,0.3),
+                inset 0 0 10px rgba(0,0,0,0.2);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .playground{
@@ -76,6 +164,58 @@ input.modal_input::placeholder {
     inset-inline-start: 50%;
     inset-block-start: 50%;
     text-align: center;
+}
+
+.game_end{
+    max-width: 280px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #faf8f4; /* светлый фон */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+}
+
+.modal_paragraph{
+    color: #461f00;
+    margin-bottom: 15px;
+}
+
+.modal_input{
+    width: 80%;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.modal_input{
+    font-size: 18px;
+}
+
+.modal_paragraph{
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.modal_restart,
+.modal_approve{
+    font-size: 18px;
+}
+
+.modal_restart,
+.modal_approve{
+    background-color: #f39c12;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .num_box{
@@ -152,6 +292,33 @@ input.modal_input::placeholder {
 }
 
 @media (min-width: 320px) and (max-width: 767px) {
+    .leaderboard{
+        width: 280px;
+    }
+
+    .leaderboard_tr{
+        font-size: 16px;
+    }
+
+    .leaderboard_h{
+        font-size: 24px;
+    }
+
+    .leadername{
+        min-width: 120px;
+        max-width: 120px;
+    }
+
+    .leaderscore{
+        min-width: 60px;
+        max-width: 60px;
+    }
+
+    .leaderdate{
+        min-width: 100px;
+        max-width: 100px;
+    }
+
     .name_header{
         width: 130px;
         height: 80px;
@@ -183,6 +350,7 @@ input.modal_input::placeholder {
         width: 60px;
         height: 60px;
         line-height: 60px;
+        border-radius: 6px;
     }
 
     .playground{
@@ -193,20 +361,23 @@ input.modal_input::placeholder {
         grid-template-columns: repeat(4, 60px);
         grid-template-rows: repeat(4, 60px);
         gap: 10px;
+        border-radius: 8px;
     }
 
     .undo_button{
         margin: 165px 0 0 -135px;
         width: 135px;
         height: 40px;
-        font-size: 12pt;
+        font-size: 13pt;
+        border-radius: 4px;
     }
 
     .restart_button{
         margin: 165px 0 0 20px;
         width: 135px;
         height: 40px;
-        font-size: 12pt;
+        font-size: 13pt;
+        border-radius: 4px;
     }
 
     .leaderboard_button{
@@ -214,10 +385,38 @@ input.modal_input::placeholder {
         height: 40px;
         margin: -185px 0 0 -135px;
         font-size: 12pt;
+        border-radius: 4px;
     }
 }
 
 @media (min-width: 767px) and (max-width: 1024px) {
+    .leaderboard{
+        width: 480px;
+    }
+
+    .leaderboard_tr{
+        font-size: 20px;
+    }
+
+    .leaderboard_h{
+        font-size: 32px;
+    }
+
+    .leadername{
+        min-width: 210px;
+        max-width: 210px;
+    }
+
+    .leaderscore{
+        min-width: 100px;
+        max-width: 100px;
+    }
+
+    .leaderdate{
+        min-width: 170px;
+        max-width: 170px;
+    }
+
     .name_header{
         width: 175px;
         height: 80px;
@@ -251,6 +450,7 @@ input.modal_input::placeholder {
         height: 80px;
         line-height: 80px;
         font-size: 18pt;
+        border-radius: 8px;
     }
 
     .playground{
@@ -261,20 +461,25 @@ input.modal_input::placeholder {
         grid-template-columns: repeat(4, 80px);
         grid-template-rows: repeat(4, 80px);
         gap: 10px;
+        border-radius: 10px;
     }
 
     .undo_button{
         margin: 205px 0 0 -175px;
         width: 175px;
-        height: 40px;
+        height: 50px;
         font-size: 16pt;
+        font-weight: 600;
+        border-radius: 8px;
     }
 
     .restart_button{
         margin: 205px 0 0 20px;
         width: 175px;
-        height: 40px;
+        height: 50px;
         font-size: 16pt;
+        font-weight: 600;
+        border-radius: 8px;
     }
 
     .leaderboard_button{
@@ -282,10 +487,39 @@ input.modal_input::placeholder {
         height: 60px;
         margin: -245px 0 0 -175px;
         font-size: 18pt;
+        font-weight: 600;
+        border-radius: 8px;
     }
 }
 
 @media (min-width: 1024px) {
+    .leaderboard{
+        width: 640px;
+    }
+
+    .leaderboard_tr{
+        font-size: 26px;
+    }
+
+    .leaderboard_h{
+        font-size: 38px;
+    }
+
+    .leadername{
+        min-width: 280px;
+        max-width: 280px;
+    }
+
+    .leaderscore{
+        min-width: 130px;
+        max-width: 130px;
+    }
+
+    .leaderdate{
+        min-width: 230px;
+        max-width: 230px;
+    }
+
     .name_header{
         width: 220px;
         height: 80px;
@@ -320,6 +554,7 @@ input.modal_input::placeholder {
         line-height: 100px;
         font-size: 22pt;
         font-weight: 800;
+        border-radius: 10px;
     }
 
     .playground{
@@ -330,6 +565,7 @@ input.modal_input::placeholder {
         grid-template-columns: repeat(4, 100px);
         grid-template-rows: repeat(4, 100px);
         gap: 10px;
+        border-radius: 14px;
     }
 
     .undo_button{
@@ -338,6 +574,7 @@ input.modal_input::placeholder {
         height: 60px;
         font-size: 20pt;
         font-weight: 700;
+        border-radius: 10px;
     }
 
     .restart_button{
@@ -346,6 +583,7 @@ input.modal_input::placeholder {
         height: 60px;
         font-size: 20pt;
         font-weight: 700;
+        border-radius: 10px;
     }
 
     .leaderboard_button{
@@ -353,6 +591,7 @@ input.modal_input::placeholder {
         height: 60px;
         margin: -290px 0 0 -220px;
         font-size: 17pt;
-        font-weight: 700;
+        font-weight: 600;
+        border-radius: 10px;
     }
 }
