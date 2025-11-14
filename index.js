@@ -9,7 +9,7 @@ let y;
 let leaders_n = [];
 let leaders_s = [];
 let leaders_d = [];
-var audio = new Audio('components\\1.mp3');
+// var audio = new Audio('components\\1.mp3');
 let boxes = [];
 let traces = [];
 let traces_users = [];
@@ -48,10 +48,10 @@ const leaderboard_button = document.createElement("button");
 
 
 function initiateVariables(){
-    if (window.screen.height <= 540 || window.screen.width <= 540) {screen.orientation.lock("portrait");}
-    if (window.screen.width >= 1024){ pos = 110;}
-    else if (window.screen.width >= 767 && window.screen.width < 1024){ pos = 90;}
-    else if (window.screen.width < 767) { pos = 70;}
+    if (document.documentElement.clientHeight <= 540 ||document.documentElement.clientWidth <= 540) {screen.orientation.lock("portrait");}
+    if (document.documentElement.clientWidth >= 1024){ pos = 110;}
+    else if (document.documentElement.clientWidth >= 767 && document.documentElement.clientWidth < 1024){ pos = 90;}
+    else if (document.documentElement.clientWidth < 767) { pos = 70;}
     score = 0;
     previous_score = 0;
     nums = [0, 0, 0, 0,
@@ -76,16 +76,9 @@ function initiateLeaderboard(){
     container.appendChild(leaderboard_button);
 
     leaderboard_button.addEventListener("click", () => {
+        free = false;
         leaderboard.showModal();
     })
-
-    const leaderboard_h = document.createElement("h1");
-    leaderboard_h.classList.add("leaderboard_h")
-    leaderboard_h.classList.add("no-select");
-    leaderboard_h.id = "leaderboard_h";
-    leaderboard_h.textContent = "Таблица лидеров";
-
-    leaderboard.appendChild(leaderboard_h);
 
     const close_leaderboard = document.createElement("button");
     close_leaderboard.classList.add("close_leaderboard")
@@ -94,10 +87,19 @@ function initiateLeaderboard(){
     close_leaderboard.textContent = "X";
 
     close_leaderboard.addEventListener("click", () => {
+        free = true;
         leaderboard.close();
     })
 
     leaderboard.appendChild(close_leaderboard);
+
+    const leaderboard_h = document.createElement("h1");
+    leaderboard_h.classList.add("leaderboard_h")
+    leaderboard_h.classList.add("no-select");
+    leaderboard_h.id = "leaderboard_h";
+    leaderboard_h.textContent = "Таблица лидеров";
+
+    leaderboard.appendChild(leaderboard_h);
 }
 
 function makeLeaderboard(){
@@ -108,13 +110,28 @@ function makeLeaderboard(){
         return;
     }
     const leadertable = document.createElement("table");
+    leadertable.classList.add("leadertable")
+    const leadercols = document.createElement("colgroup");
+    leadercols.classList.add("leadercols");
+    const leadername = document.createElement("col");
+    leadername.classList.add("leadername");
+    const leaderscore = document.createElement("col");
+    leaderscore.classList.add("leaderscore");
+    const leaderdate = document.createElement("col");
+    leaderdate.classList.add("leaderdate");
+    leadercols.appendChild(leadername);
+    leadercols.appendChild(leaderscore);
+    leadercols.appendChild(leaderdate);
+    leadertable.appendChild(leadercols);
     let tr = leadertable.insertRow();
+    tr.classList.add("leaderboard_tr");
     tr.insertCell().appendChild(document.createTextNode(`Имя`));
     tr.insertCell().appendChild(document.createTextNode(`Счёт`));
     tr.insertCell().appendChild(document.createTextNode(`Дата`));
 
     for (let index = 0; index < leaders_n.length; index++){
         tr = leadertable.insertRow();
+        tr.classList.add("leaderboard_tr");
         
         tr.insertCell().appendChild(document.createTextNode(`${leaders_n[index]}`));
         tr.insertCell().appendChild(document.createTextNode(`${leaders_s[index]}`));
@@ -137,9 +154,9 @@ function initiateScore(){
 function checkPos(){
     let timer = setInterval(function() {
         let remake = false;
-        if (window.screen.width >= 1024 && pos != 110){ pos = 110; remake = true;}
-        else if (window.screen.width >= 767 && window.screen.width < 1024 && pos != 90){ pos = 90; remake = true;}
-        else if (window.screen.width < 767 && pos != 70) { pos = 70; remake = true;}
+        if (document.documentElement.clientWidth >= 1024 && pos != 110){ pos = 110; remake = true;}
+        else if (document.documentElement.clientWidth >= 767 && document.documentElement.clientWidth < 1024 && pos != 90){ pos = 90; remake = true;}
+        else if (document.documentElement.clientWidth < 767 && pos != 70) { pos = 70; remake = true;}
         
         if (remake) {
             for (let cp_index = 0; cp_index < boxes.length; cp_index++){
@@ -234,7 +251,8 @@ function updateParagraph(){
     modal_paragraph.classList.add("modal_paragraph");
     modal_paragraph.id = "modal_paragraph";
     modal_paragraph.textContent = "Игра окончена.\r\n";
-    modal_paragraph.textContent += "Сохранить результат в таблицу?";
+    modal_paragraph.textContent += "Сохранить результат\r\n";
+    modal_paragraph.textContent += "в таблицу?";
 }
 
 function updateDialog(){
@@ -341,6 +359,7 @@ function loadGame(){
         if (same) { undone = false; }
         if (zeros) { initiate(); }
     } catch {
+        initiate();
         return;
     }    
 }
@@ -415,7 +434,7 @@ restart.addEventListener("click", () => {
 
 undo.addEventListener("click", () => {
     if (!undone){
-        audio.play();
+        // audio.play();
         undone = true;
         score = previous_score;
         deleteCells();
@@ -445,6 +464,7 @@ function initiate(){
         score_amount.textContent = 0;
         score = 0;
         previous_score = 0;
+        updateParagraph();
         generateNums(Math.floor(Math.random()*(1.3) + 1.85));
         news = [];
     }
